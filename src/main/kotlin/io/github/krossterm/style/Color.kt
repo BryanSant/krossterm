@@ -48,8 +48,8 @@ public sealed interface Color {
 
     public companion object {
         /**
-         * Parse a color name as crossterm's [`FromStr`] does:
-         * `red`, `dark_red`, `rgb_(r,g,b)`, `ansi_(n)`, etc.
+         * Parse a color name or literal:
+         * `red`, `dark_red`, `rgb(r,g,b)`, `ansi(n)`, `#rrggbb`, `#rgb`, etc.
          * Returns null for unknown names rather than throwing.
          */
         public fun parse(s: String): Color? {
@@ -72,12 +72,14 @@ public sealed interface Color {
                 "magenta" -> Magenta
                 "cyan" -> Cyan
                 "white" -> White
-                else -> parseRgb(name) ?: parseAnsi(name)
+                else -> parseHex(name) ?: parseRgb(name) ?: parseAnsi(name)
             }
         }
 
-        private val rgbPattern = Regex("""rgb_\((\d+),\s*(\d+),\s*(\d+)\)""")
-        private val ansiPattern = Regex("""ansi_\((\d+)\)""")
+        private val rgbPattern  = Regex("""rgb\((\d+),\s*(\d+),\s*(\d+)\)""")
+        private val ansiPattern = Regex("""ansi\((\d+)\)""")
+        private val hex6Pattern = Regex("""#([0-9a-f]{6})""")
+        private val hex3Pattern = Regex("""#([0-9a-f]{3})""")
 
         private fun parseRgb(s: String): Rgb? = rgbPattern.matchEntire(s)?.let {
             val (r, g, b) = it.destructured
@@ -87,6 +89,19 @@ public sealed interface Color {
         private fun parseAnsi(s: String): AnsiValue? = ansiPattern.matchEntire(s)?.let {
             val v = it.groupValues[1].toIntOrNull() ?: return null
             try { AnsiValue(v) } catch (_: IllegalArgumentException) { null }
+        }
+
+        private fun parseHex(s: String): Rgb? {
+            hex6Pattern.matchEntire(s)?.let { m ->
+                val h = m.groupValues[1]
+                return Rgb(h.substring(0, 2).toInt(16), h.substring(2, 4).toInt(16), h.substring(4, 6).toInt(16))
+            }
+            hex3Pattern.matchEntire(s)?.let { m ->
+                val h = m.groupValues[1]
+                // Expand each nibble: #rgb → #rrggbb  (digit * 0x11 = digit * 17)
+                return Rgb(h[0].digitToInt(16) * 17, h[1].digitToInt(16) * 17, h[2].digitToInt(16) * 17)
+            }
+            return null
         }
     }
 }

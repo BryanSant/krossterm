@@ -4,75 +4,309 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-2.3-blueviolet.svg)](https://kotlinlang.org/)
 [![JVM](https://img.shields.io/badge/jvm-21+-orange.svg)](https://adoptium.net/)
 
-Pure-Kotlin reimplementation of the Rust [crossterm](https://github.com/crossterm-rs/crossterm) library — cross-platform terminal manipulation for the JVM.
+A Kotlin-idiomatic library and DSL for full terminal control on the JVM. Inspired by the Rust [crossterm](https://github.com/crossterm-rs/crossterm) library, krossterm goes beyond ANSI escape codes to provide everything needed for rich TUI applications: raw mode, event streams, mouse capture, synchronized rendering, and a set of shell-integration features that crossterm doesn't offer.
 
-## What's in the box
+Built on **[jline 3](https://github.com/jline/jline3)** for cross-platform TTY access. Uses **kotlinx.coroutines** `Flow` for events, with a blocking fallback for non-coroutine callers.
 
-- **Cursor** — move, save / restore, hide / show, blink, shape
-- **Terminal** — clear, scroll, resize, alternate screen, synchronized output, line wrap
-- **Style** — 16 named colors, 256-color palette, 24-bit RGB, foreground / background / underline, attributes (bold, italic, underline, etc.)
-- **Stylize** — extension functions: `"warn".yellow().bold().on(Color.Black)`
-- **Events** — keyboard / mouse / focus / paste / resize as `Flow<Event>` or blocking `readEvent()`
-- **Kitty keyboard protocol** — push / pop progressive enhancement flags; CSI-u parsing
-- **Bracketed paste** — clipboard content arrives as `Event.Paste`
-- **Hyperlinks** — OSC 8 clickable URIs with key=value params
-- **Clipboard** — OSC 52 copy with multi-destination (clipboard + primary)
+---
 
-Built on **jline 3** for cross-platform raw mode and TTY access. Uses **kotlinx.coroutines** `Flow` for events, with a blocking escape hatch for non-coroutine callers.
+## Why krossterm?
+
+Most JVM "ANSI" libraries stop at color codes. krossterm is a complete terminal I/O library:
+
+| Capability | krossterm | Typical ANSI lib |
+|---|:---:|:---:|
+| Raw mode (no line buffering) | Yes | No |
+| Keyboard events (key-up, modifiers, media keys) | Yes | No |
+| Mouse events (click, drag, scroll) | Yes | No |
+| Focus / paste / resize events | Yes | No |
+| Alternate screen buffer | Yes | No |
+| Synchronized rendering (no flicker) | Yes | No |
+| Cursor shape & visibility | Yes | Partial |
+| 24-bit RGB + 256 palette + named colors | Yes | Partial |
+| OSC 8 links | Yes | No |
+| OSC 52 clipboard copy | Yes | No |
+| OSC 9;4 progress indicator | Yes | No |
+| Desktop notifications | Yes | No |
+
+---
 
 ## Requirements
 
-- JDK 21 or newer (JDK 25 recommended; krossterm is built and tested against 25)
-- Kotlin 2.3+ for consumers
+- JDK 21 or newer (built and tested against JDK 25)
+- Kotlin 2.3+
 
-## Quick start
+---
 
-```kotlin
-import io.github.krossterm.*
-import io.github.krossterm.cursor.*
-import io.github.krossterm.style.*
-import io.github.krossterm.terminal.*
+## Features
 
-fun main() = Terminal.system().use { t ->
-    t.alternateScreen {
-        t.out.execute(MoveTo(0, 0), Print("hello, ".bold()), Print("world".red().underlined()))
-        Thread.sleep(1500)
-    }
-}
-```
+### Terminal DSL
 
-DSL form:
+A scoped DSL for readable multi-command sequences:
 
 ```kotlin
 Terminal.system().use { t ->
     t.out.terminal {
         moveTo(0, 0)
-        print("hello, ".bold())
-        print("world".red().underlined())
+        clear()
+        setForegroundColor(Color.Cyan)
+        println("Hello from krossterm!")
+        resetColor()
+        moveTo(0, 3)
+        print("Press any key...".dim())
     }
+    t.readEventBlocking()
 }
 ```
 
-Events with coroutines:
+See [`DslShowcase.kt`](examples/src/main/kotlin/io/github/krossterm/examples/DslShowcase.kt) for a single runnable file that exercises every DSL feature: all 16 named colors, RGB and 256-palette swatches, every text attribute, `ContentStyle`, cursor shapes, OSC links, clipboard, progress, notifications, and a live event stream.
+
+---
+
+### Raw mode
+
+Raw mode disables line buffering and echo so your application receives every keystroke immediately, without the user pressing Enter. It is the foundation of any TUI.
 
 ```kotlin
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.runBlocking
+Terminal.system().use { t ->
+    t.rawMode {
+        // Every keypress is delivered immediately; no echo to screen
+        val event = t.readEventBlocking()
+        println(event)
+    }
+    // Line-buffered mode is restored automatically on exit
+}
+```
 
+`rawMode { }` is a scoped function — it restores the terminal on any exit, including exceptions.
+
+---
+
+### Alternate screen
+
+Switch to a clean buffer, draw your UI, and leave no trace in the user's scrollback.
+
+```kotlin
+Terminal.system().use { t ->
+    t.alternateScreen {
+        t.out.execute(Clear(ClearType.All), MoveTo(0, 0))
+        t.out.execute(Print("Press any key to exit..."))
+        t.readEventBlocking()
+    }
+    // Original screen and scrollback are fully restored
+}
+```
+
+---
+
+### Style and color
+
+Three color spaces, a full set of SGR attributes, and composable extension functions.
+
+```kotlin
+// Named colors
+t.out.execute(Print("error".red().bold()))
+
+// 24-bit RGB
+t.out.execute(Print("custom".with(Color.Rgb(255, 165, 0))))
+
+// 256-color palette
+t.out.execute(Print("palette".with(Color.AnsiValue(208))))
+
+// Hex strings — Color.parse() accepts #rrggbb, #rgb, named, rgb(r,g,b), ansi(n)
+t.out.execute(Print("hex".with(Color.parse("#e63946")!!)))
+
+// Layered: foreground + background + underline + attributes
+t.out.execute(Print("fancy".white().on(Color.DarkBlue).bold().italic()))
+
+// Or use Commands directly
+t.out.execute(
+    SetForegroundColor(Color.Green),
+    SetAttribute(Attribute.Bold),
+    Print("styled"),
+    ResetColor,
+)
+```
+
+---
+
+### Cursor control
+
+```kotlin
+t.out.execute(
+    MoveTo(10, 5),          // absolute (column, row)
+    MoveRight(3),           // relative
+    SavePosition,
+    Hide,
+    SetCursorStyle.SteadyBar,
+)
+
+// Query actual cursor position
+val pos: Position? = t.cursorPosition()
+```
+
+---
+
+### Keyboard events
+
+krossterm delivers rich keyboard events including key-down, key-up, key-repeat, all modifiers, function keys, media keys, and the full [Kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/).
+
+```kotlin
 Terminal.system().use { t ->
     t.rawMode {
         runBlocking {
             t.events()
-                .takeWhile { it !is Event.Key || it.event.code != KeyCode.Esc }
-                .collect { println(it) }
+                .takeWhile { event ->
+                    // Stop on Escape
+                    event !is Event.Key || event.event.code != KeyCode.Esc
+                }
+                .collect { event ->
+                    when (event) {
+                        is Event.Key -> {
+                            val key = event.event
+                            println("${key.kind} ${key.code} mod=${key.modifiers}")
+                        }
+                        else -> println(event)
+                    }
+                }
         }
     }
 }
 ```
 
-## Examples
+Enable Kitty progressive enhancement for key-up events and unambiguous modifier keys:
 
-Six runnable examples live under `examples/src/main/kotlin/io/github/krossterm/examples/`. Run any one with:
+```kotlin
+t.out.execute(PushKeyboardEnhancementFlags(
+    KeyboardEnhancementFlags.DISAMBIGUATE_ESCAPE_CODES +
+    KeyboardEnhancementFlags.REPORT_EVENT_TYPES
+))
+```
+
+---
+
+### Mouse events
+
+```kotlin
+t.out.execute(EnableMouseCapture)
+
+t.rawMode {
+    runBlocking {
+        t.events().collect { event ->
+            if (event is Event.Mouse) {
+                val m = event.event
+                println("${m.kind} at col=${m.column} row=${m.row}")
+            }
+        }
+    }
+}
+
+t.out.execute(DisableMouseCapture)
+```
+
+Supported event kinds: `Down`, `Up`, `Drag` (per button), `Moved`, `ScrollUp`, `ScrollDown`, `ScrollLeft`, `ScrollRight`.
+
+---
+
+### Synchronized rendering
+
+Batch output changes into a single atomic update — eliminates tearing and flicker in complex UIs.
+
+```kotlin
+t.synchronizedUpdate {
+    t.out.execute(
+        MoveTo(0, 0), Clear(ClearType.All),
+        Print("frame $n rendered atomically"),
+    )
+}
+```
+
+---
+
+### Links (OSC 8)
+
+Emit clickable links in terminals that support [OSC 8](https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda).
+
+```kotlin
+// .link() extension — composes with the Stylize chain
+println("krossterm on GitHub".bold().cyan().link("https://github.com/krossterm/krossterm"))
+
+// Imperative style
+t.out.execute(
+    StartLink("https://github.com/krossterm/krossterm"),
+    Print("krossterm on GitHub"),
+    EndLink,
+)
+
+// DSL style — use the + operator (StartLink has no TerminalScope shorthand)
+t.out.terminal {
+    +StartLink("https://github.com/krossterm/krossterm")
+    print("krossterm on GitHub")
+    +EndLink
+}
+```
+
+The optional `params` map (most commonly `id=`) coalesces link segments that span a line break into one clickable target.
+
+---
+
+### Clipboard (OSC 52)
+
+Copy text to the system clipboard without spawning a subprocess.
+
+```kotlin
+t.out.execute(CopyToClipboard("copied text"))
+
+// Also write to the X11 primary selection
+t.out.execute(CopyToClipboard(
+    content = "selected text",
+    destinations = setOf(ClipboardDestination.Clipboard, ClipboardDestination.Primary),
+))
+```
+
+---
+
+### Progress indicator (OSC 9;4)
+
+Show progress in the taskbar or terminal tab using the [OSC 9;4](https://conemu.github.io/en/AnsiEscapeCodes.html#ConEmu_specific_OSC) protocol, supported by Windows Terminal, ConEmu, and others.
+
+```kotlin
+// Show a determinate progress bar at 42%
+t.out.execute(SetProgress(ProgressState.Normal(42)))
+
+// Signal an error state
+t.out.execute(SetProgress(ProgressState.Error(42)))
+
+// Indeterminate (spinning)
+t.out.execute(SetProgress(ProgressState.Indeterminate))
+
+// Paused
+t.out.execute(SetProgress(ProgressState.Paused(75)))
+
+// Remove the indicator
+t.out.execute(ClearProgress)
+```
+
+---
+
+### Desktop notifications
+
+Trigger a desktop notification from within the terminal, without any OS-specific API or subprocess.
+
+```kotlin
+t.out.execute(SendNotification(
+    title = "Build complete",
+    body = "All tests passed in 4.2 s",
+))
+```
+
+Emits OSC 9 (ConEmu / Windows Terminal), OSC 99 (Kitty), and OSC 777 (urxvt + libnotify) for broad terminal coverage.
+
+---
+
+## Running the examples
+
+Nine runnable examples are included under `examples/src/main/kotlin/io/github/krossterm/examples/`:
 
 ```bash
 ./gradlew runExample -Pexample=KeyDisplay
@@ -80,35 +314,29 @@ Six runnable examples live under `examples/src/main/kotlin/io/github/krossterm/e
 
 | Example | Demonstrates |
 |---|---|
-| `IsTty` | TTY detection and terminal size |
-| `Stylize` | Named / palette / RGB colors, attribute combos |
-| `Link` | OSC 8 hyperlinks |
-| `KeyDisplay` | Raw mode + `Flow<Event>` |
+| `DslShowcase` | **Every DSL feature in one file** — colors, attributes, cursor, OSC, events |
+| `IsTty` | TTY detection, terminal type, and size |
+| `Stylize` | Named / palette / RGB colors and attribute combos |
+| `Link` | OSC 8 links — imperative, DSL, and `.link()` extension |
+| `KeyDisplay` | Raw mode + `Flow<Event>` + all key event fields |
 | `EventStreamCoroutines` | `pollEvent(timeout)` heartbeat pattern |
-| `InteractiveDemo` | Alternate screen + sync update + mouse capture + style |
+| `InteractiveDemo` | Alternate screen, synchronized updates, mouse capture |
+| `Progress` | All four OSC 9;4 progress states |
+| `Notify` | Desktop notifications via OSC 9 / 99 / 777 |
+
+---
 
 ## Design notes
 
-- **Single module**, single jar (`io.github.krossterm:krossterm`).
-- **`Command` is a `fun interface`** — every action implements one method, `writeAnsi(out: Appendable)`. Custom commands are one SAM lambda away.
-- **DSL marker** prevents accidental nesting of `terminal { terminal { … } }`.
-- **`Stylize` extensions** on `String` and `StyledContent<T>` so `.red().bold()` chains compose cleanly.
-- **`Attributes` is a value class** wrapping `Int` — zero-allocation bitset with `+` / `-` / `in` operators.
-- **Events**: `MutableSharedFlow<Event>` with backpressure-suspend (256-element buffer); never drops keystrokes.
-- **Parser** is hand-rolled, byte-by-byte, ported from crossterm's `src/event/sys/unix/parse.rs` — supports kitty CSI-u, SGR mouse, bracketed paste.
-- **Resource lifetime** is `AutoCloseable` + `use { }`. `rawMode { }`, `alternateScreen { }`, `synchronizedUpdate { }` are inline scope functions that restore on any exit.
+- **`Command` is a `fun interface`** — every action implements `writeAnsi(out: Appendable)`. Custom commands are a single SAM lambda.
+- **`Attributes`, `KeyModifiers`, `KeyEventState`** are `@JvmInline value class` bitsets — zero allocation, `+` / `-` / `in` operators.
+- **`Stylize` extensions** on `String` and `StyledContent<T>` compose via chaining: `"warn".yellow().bold().on(Color.Black)`.
+- **Event delivery** uses `MutableSharedFlow` with a 256-element buffer — keystrokes are never dropped under backpressure.
+- **ANSI input parser** is hand-rolled and byte-by-byte, ported from crossterm's `src/event/sys/unix/parse.rs`. Supports Kitty CSI-u, SGR mouse, bracketed paste, and cursor-position responses.
+- **Scoped resource management**: `rawMode { }`, `alternateScreen { }`, and `synchronizedUpdate { }` are inline functions that guarantee cleanup on any exit path, including exceptions.
+- **Single module, single jar** — `io.github.krossterm:krossterm`.
 
-## Status
-
-Early-development port. The public surface is stable enough to use; expect the occasional new attribute or terminal feature to land. Tracked milestones:
-
-- [x] M1 — skeleton + Command + DSL + cursor / terminal commands
-- [x] M2 — Style + Stylize
-- [x] M3 — Event types + ANSI input parser (84 corpus tests)
-- [x] M4 — EventReader + Flow + raw mode + SIGWINCH + cursor query
-- [x] M5 — Clipboard (OSC 52) + hyperlinks (OSC 8)
-- [x] M6 — Examples + KDoc + README
-- [ ] M7 — CI matrix + Maven Central publishing
+---
 
 ## Testing
 
@@ -116,14 +344,14 @@ Early-development port. The public surface is stable enough to use; expect the o
 ./gradlew test
 ```
 
-Currently 123 tests across parser, command serialization, Stylize, Attributes, and integration scopes.
+123 tests cover the ANSI parser, every command's escape sequence, `Stylize` / `Attributes`, and integration scopes.
 
-TTY-required integration tests are tagged `Tty` and excluded by default. To run them locally:
+TTY-required tests are tagged `Tty` and excluded by default. Run them locally with a real terminal attached:
 
 ```bash
 ./gradlew ttyTest
 ```
-
+---
 ## License
 
 MIT — see [LICENSE](LICENSE).

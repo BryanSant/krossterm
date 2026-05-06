@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.krossterm"
-version = "0.1.0-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 kotlin {
     jvmToolchain(25)

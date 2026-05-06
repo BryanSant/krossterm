@@ -4,7 +4,7 @@ package io.github.krossterm.ansi
  * ANSI control-sequence string constants used to assemble escape sequences.
  *
  * Most commands emit a CSI sequence (`ESC [` … final byte). OSC sequences
- * (`ESC ]` … BEL or ST) are used for hyperlinks (OSC 8) and clipboard (OSC 52).
+ * (`ESC ]` … BEL or ST) are used for links (OSC 8) and clipboard (OSC 52).
  */
 public object Csi {
     /** ESC (`\u001B`). */
