@@ -1,3 +1,5 @@
+<img width="850" height="464" alt="krossterm" src="https://github.com/user-attachments/assets/a82358dd-cf2a-4367-9944-b8526e3a243e" />
+
 # krossterm
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
