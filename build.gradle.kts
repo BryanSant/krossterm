@@ -6,6 +6,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("com.gradleup.nmcp") version "1.4.4"
 }
 
 group = "io.github.krossterm"
@@ -118,30 +119,30 @@ publishing {
     }
     repositories {
         maven {
-            name = "sonatypeCentral"
-            val isSnapshot = version.toString().endsWith("SNAPSHOT")
-            url = uri(
-                if (isSnapshot) "https://central.sonatype.com/repository/maven-snapshots/"
-                else "https://central.sonatype.com/api/v1/publisher/upload/"
-            )
+            name = "sonatypeSnapshots"
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
             credentials {
-                username = providers.gradleProperty("mavenCentralUsername").orNull
-                    ?: System.getenv("MAVEN_CENTRAL_USERNAME")
-                password = providers.gradleProperty("mavenCentralPassword").orNull
-                    ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
+                username = System.getenv("CENTRAL_PORTAL_USERNAME")
+                password = System.getenv("CENTRAL_PORTAL_PASSWORD")
             }
         }
     }
 }
 
 signing {
-    val key = providers.gradleProperty("signingInMemoryKey").orNull
-        ?: System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey")
-    val pwd = providers.gradleProperty("signingInMemoryKeyPassword").orNull
-        ?: System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
+    val key = System.getenv("GPG_PRIVATE_KEY")
+    val pwd = System.getenv("GPG_PASSPHRASE")
     if (!key.isNullOrBlank()) {
         useInMemoryPgpKeys(key, pwd)
         sign(publishing.publications["maven"])
+    }
+}
+
+nmcp {
+    publishAllPublicationsToCentralPortal {
+        username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: ""
+        password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: ""
+        publishingType = "AUTOMATIC"
     }
 }
 

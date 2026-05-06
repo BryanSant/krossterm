@@ -21,10 +21,18 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Publish to Sonatype Central
+      - name: Decode GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > gpg_key.asc
+          echo "GPG_KEY_CONTENT<<EOF" >> $GITHUB_ENV
+          cat gpg_key.asc >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          rm gpg_key.asc
+
+      - name: Publish to Maven Central
+        run: ./gradlew --no-daemon publishAllPublicationsToCentralPortal
         env:
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-        run: ./gradlew --no-daemon publish
+          GPG_PRIVATE_KEY: ${{ env.GPG_KEY_CONTENT }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
