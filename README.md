@@ -306,7 +306,7 @@ Emits OSC 9 (ConEmu / Windows Terminal), OSC 99 (Kitty), and OSC 777 (urxvt + li
 
 ## Running the examples
 
-Nine runnable examples are included under `examples/src/main/kotlin/io/github/krossterm/examples/`:
+Ten runnable examples are included under `examples/src/main/`:
 
 ```bash
 ./gradlew runExample -Pexample=KeyDisplay
@@ -315,6 +315,7 @@ Nine runnable examples are included under `examples/src/main/kotlin/io/github/kr
 | Example | Demonstrates |
 |---|---|
 | `DslShowcase` | **Every DSL feature in one file** — colors, attributes, cursor, OSC, events |
+| [`JavaShowcase`](examples/src/main/java/io/github/krossterm/examples/JavaShowcase.java) | Same showcase using the imperative API from Java — `CommandKt.execute`, `StylizeKt`, `readEventBlocking()` |
 | `IsTty` | TTY detection, terminal type, and size |
 | `Stylize` | Named / palette / RGB colors and attribute combos |
 | `Link` | OSC 8 links — imperative, DSL, and `.link()` extension |

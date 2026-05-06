@@ -50,7 +50,7 @@ testing {
 }
 
 val examples: SourceSet by sourceSets.creating {
-    java.setSrcDirs(emptyList<File>())
+    java.srcDir("examples/src/main/java")
     kotlin.srcDir("examples/src/main/kotlin")
     compileClasspath += sourceSets.main.get().output
     runtimeClasspath += sourceSets.main.get().output
@@ -68,9 +68,14 @@ dependencies {
 tasks.register<JavaExec>("runExample") {
     group = "application"
     description = "Run an example: ./gradlew runExample -Pexample=KeyDisplay"
+    dependsOn("compileExamplesKotlin", "compileExamplesJava")
     classpath = examples.runtimeClasspath
     val name = providers.gradleProperty("example").orElse("InteractiveDemo")
-    mainClass.set(name.map { "io.github.krossterm.examples.${it}Kt" })
+    // Kotlin top-level functions compile to a class with a Kt suffix; Java classes keep their name.
+    mainClass.set(name.map { n ->
+        if (n.startsWith("Java")) "io.github.krossterm.examples.$n"
+        else "io.github.krossterm.examples.${n}Kt"
+    })
     standardInput = System.`in`
 }
 
