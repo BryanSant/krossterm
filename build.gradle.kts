@@ -9,9 +9,6 @@ plugins {
     id("com.gradleup.nmcp") version "1.4.4"
 }
 
-group = "io.github.krossterm"
-version = "1.0.0-SNAPSHOT"
-
 kotlin {
     jvmToolchain(25)
     explicitApi()
