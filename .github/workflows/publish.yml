@@ -33,7 +33,7 @@ jobs:
           rm gpg_key.asc
 
       - name: Publish to Maven Central and GitHub Packages
-        run: ./gradlew publishAllPublicationsToCentralPortal publishMavenPublicationToGitHubPackagesRepository
+        run: ./gradlew publishAllPublicationsToCentralPortal
         env:
           CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}

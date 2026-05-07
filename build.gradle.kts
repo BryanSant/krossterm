@@ -117,24 +117,6 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/krossterm/krossterm")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-        maven {
-            name = "sonatypeSnapshots"
-            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-            credentials {
-                username = System.getenv("CENTRAL_PORTAL_USERNAME")
-                password = System.getenv("CENTRAL_PORTAL_PASSWORD")
-            }
-        }
-    }
 }
 
 signing {
@@ -148,8 +130,8 @@ signing {
 
 nmcp {
     publishAllPublicationsToCentralPortal {
-        username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: ""
-        password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: ""
+        username = System.getenv("MVN_CENTRAL_USER") ?: ""
+        password = System.getenv("MVN_CENTRAL_PASS") ?: ""
         publishingType = "AUTOMATIC"
     }
 }
