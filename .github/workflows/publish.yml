@@ -35,8 +35,8 @@ jobs:
       - name: Publish to Maven Central and GitHub Packages
         run: ./gradlew publishAllPublicationsToCentralPortal
         env:
-          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
-          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          MVN_CENTRAL_USER: ${{ secrets.MVN_CENTRAL_USER }}
+          MVN_CENTRAL_PASS: ${{ secrets.MVN_CENTRAL_PASS }}
           GPG_PRIVATE_KEY: ${{ env.GPG_KEY_CONTENT }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
