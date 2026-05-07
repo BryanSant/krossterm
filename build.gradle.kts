@@ -93,7 +93,7 @@ publishing {
             pom {
                 name.set("krossterm")
                 description.set("Pure-Kotlin reimplementation of crossterm — terminal manipulation for the JVM.")
-                url.set("https://github.com/krossterm/krossterm")
+                url.set("https://github.com/bryansant/krossterm")
                 licenses {
                     license {
                         name.set("MIT")
@@ -107,9 +107,9 @@ publishing {
                     }
                 }
                 scm {
-                    url.set("https://github.com/krossterm/krossterm")
-                    connection.set("scm:git:git://github.com/krossterm/krossterm.git")
-                    developerConnection.set("scm:git:ssh://git@github.com/krossterm/krossterm.git")
+                    url.set("https://github.com/bryansant/krossterm")
+                    connection.set("scm:git:git://github.com/bryansant/krossterm.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/bryansant/krossterm.git")
                 }
             }
         }
