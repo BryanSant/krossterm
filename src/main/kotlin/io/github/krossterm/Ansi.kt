@@ -1,4 +1,4 @@
-package io.github.krossterm.ansi
+package io.github.krossterm
 
 /**
  * ANSI control-sequence string constants used to assemble escape sequences.
@@ -6,7 +6,7 @@ package io.github.krossterm.ansi
  * Most commands emit a CSI sequence (`ESC [` … final byte). OSC sequences
  * (`ESC ]` … BEL or ST) are used for links (OSC 8) and clipboard (OSC 52).
  */
-public object Csi {
+public object Ansi {
     /** ESC (`\u001B`). */
     public const val ESC: String = "\u001B"
 

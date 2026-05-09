@@ -1,8 +1,47 @@
-package io.github.krossterm.cursor
+package io.github.krossterm
 
-import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.CSI
-import io.github.krossterm.ansi.Csi.ESC
+import io.github.krossterm.Ansi.CSI
+import io.github.krossterm.Ansi.ESC
+
+// ---- Position ----
+
+/**
+ * A cursor position: zero-indexed (column, row).
+ *
+ * Stored as a packed Long for allocation-free returns.
+ */
+@JvmInline
+public value class Position internal constructor(@PublishedApi internal val packed: Long) {
+    public val column: Int get() = (packed ushr 32).toInt()
+    public val row: Int get() = (packed and 0xFFFFFFFFL).toInt()
+
+    public operator fun component1(): Int = column
+    public operator fun component2(): Int = row
+
+    override fun toString(): String = "Position(column=$column, row=$row)"
+
+    public companion object {
+        public fun of(column: Int, row: Int): Position {
+            require(column >= 0 && row >= 0) { "Position must be non-negative: ($column, $row)" }
+            return Position((column.toLong() shl 32) or (row.toLong() and 0xFFFFFFFFL))
+        }
+    }
+}
+
+// ---- Style ----
+
+/**
+ * Cursor shape variants, mapped to the DECSCUSR control codes (`CSI N q`).
+ */
+public enum class CursorStyle(internal val code: Int) {
+    DefaultUserShape(0),
+    BlinkingBlock(1),
+    SteadyBlock(2),
+    BlinkingUnderscore(3),
+    SteadyUnderscore(4),
+    BlinkingBar(5),
+    SteadyBar(6),
+}
 
 // ---- Movement ----
 

@@ -1,7 +1,7 @@
 package io.github.krossterm.style
 
 import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.CSI
+import io.github.krossterm.Ansi.CSI
 
 /** Set the active foreground color. */
 public data class SetForegroundColor(val color: Color) : Command {

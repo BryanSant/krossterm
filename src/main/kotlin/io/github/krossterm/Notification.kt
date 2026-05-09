@@ -1,8 +1,8 @@
-package io.github.krossterm.notification
+package io.github.krossterm
 
 import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.OSC
-import io.github.krossterm.ansi.Csi.ST
+import io.github.krossterm.Ansi.OSC
+import io.github.krossterm.Ansi.ST
 
 /**
  * Send a desktop notification via OSC escape sequences.

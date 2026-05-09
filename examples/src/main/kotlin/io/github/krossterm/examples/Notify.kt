@@ -2,7 +2,7 @@ package io.github.krossterm.examples
 
 import io.github.krossterm.Terminal
 import io.github.krossterm.execute
-import io.github.krossterm.notification.SendNotification
+import io.github.krossterm.SendNotification
 import io.github.krossterm.style.bold
 import io.github.krossterm.style.cyan
 import io.github.krossterm.style.green

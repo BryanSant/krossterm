@@ -1,6 +1,9 @@
 package io.github.krossterm.clipboard
 
+import io.github.krossterm.ClipboardDestination
+import io.github.krossterm.ClipboardTooLargeException
 import io.github.krossterm.Command
+import io.github.krossterm.CopyToClipboard
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe

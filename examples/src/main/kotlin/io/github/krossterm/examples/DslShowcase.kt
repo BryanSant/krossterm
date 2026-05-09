@@ -2,11 +2,11 @@ package io.github.krossterm.examples
 
 import io.github.krossterm.Terminal
 import io.github.krossterm.TerminalScope
-import io.github.krossterm.clipboard.CopyToClipboard
-import io.github.krossterm.cursor.CursorStyle
-import io.github.krossterm.cursor.Hide
-import io.github.krossterm.cursor.SetCursorStyle
-import io.github.krossterm.cursor.Show
+import io.github.krossterm.CopyToClipboard
+import io.github.krossterm.CursorStyle
+import io.github.krossterm.Hide
+import io.github.krossterm.SetCursorStyle
+import io.github.krossterm.Show
 import io.github.krossterm.event.DisableFocusChange
 import io.github.krossterm.event.DisableMouseCapture
 import io.github.krossterm.event.EnableFocusChange
@@ -14,11 +14,11 @@ import io.github.krossterm.event.EnableMouseCapture
 import io.github.krossterm.event.Event
 import io.github.krossterm.event.KeyCode
 import io.github.krossterm.execute
-import io.github.krossterm.link.EndLink
-import io.github.krossterm.link.StartLink
-import io.github.krossterm.progress.ClearProgress
-import io.github.krossterm.progress.ProgressState
-import io.github.krossterm.progress.SetProgress
+import io.github.krossterm.EndLink
+import io.github.krossterm.StartLink
+import io.github.krossterm.ClearProgress
+import io.github.krossterm.ProgressState
+import io.github.krossterm.SetProgress
 import io.github.krossterm.style.Attribute
 import io.github.krossterm.style.Attributes
 import io.github.krossterm.style.Color

@@ -1,6 +1,9 @@
 package io.github.krossterm.progress
 
+import io.github.krossterm.ClearProgress
 import io.github.krossterm.Command
+import io.github.krossterm.ProgressState
+import io.github.krossterm.SetProgress
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe

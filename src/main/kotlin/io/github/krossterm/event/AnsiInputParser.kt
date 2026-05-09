@@ -1,4 +1,4 @@
-package io.github.krossterm.event.parser
+package io.github.krossterm.event
 
 import io.github.krossterm.event.Event
 import io.github.krossterm.event.KeyCode

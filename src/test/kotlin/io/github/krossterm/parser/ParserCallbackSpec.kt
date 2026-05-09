@@ -1,6 +1,6 @@
 package io.github.krossterm.parser
 
-import io.github.krossterm.event.parser.AnsiInputParser
+import io.github.krossterm.event.AnsiInputParser
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 

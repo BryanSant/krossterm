@@ -1,5 +1,7 @@
 package io.github.krossterm.link
 
+import io.github.krossterm.LinkContent
+import io.github.krossterm.link
 import io.github.krossterm.style.bold
 import io.github.krossterm.style.cyan
 import io.kotest.core.spec.style.StringSpec

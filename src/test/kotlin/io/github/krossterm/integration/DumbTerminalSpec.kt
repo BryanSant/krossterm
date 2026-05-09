@@ -2,7 +2,7 @@ package io.github.krossterm.integration
 
 import io.github.krossterm.alternateScreen
 import io.github.krossterm.execute
-import io.github.krossterm.cursor.MoveTo
+import io.github.krossterm.MoveTo
 import io.github.krossterm.style.Print
 import io.github.krossterm.synchronizedUpdate
 import io.kotest.core.spec.style.StringSpec

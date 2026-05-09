@@ -1,18 +1,18 @@
 package io.github.krossterm
 
-import io.github.krossterm.cursor.Hide
-import io.github.krossterm.cursor.MoveDown
-import io.github.krossterm.cursor.MoveLeft
-import io.github.krossterm.cursor.MoveRight
-import io.github.krossterm.cursor.MoveTo
-import io.github.krossterm.cursor.MoveToColumn
-import io.github.krossterm.cursor.MoveToNextLine
-import io.github.krossterm.cursor.MoveToPreviousLine
-import io.github.krossterm.cursor.MoveToRow
-import io.github.krossterm.cursor.MoveUp
-import io.github.krossterm.cursor.RestorePosition
-import io.github.krossterm.cursor.SavePosition
-import io.github.krossterm.cursor.Show
+import io.github.krossterm.Hide
+import io.github.krossterm.MoveDown
+import io.github.krossterm.MoveLeft
+import io.github.krossterm.MoveRight
+import io.github.krossterm.MoveTo
+import io.github.krossterm.MoveToColumn
+import io.github.krossterm.MoveToNextLine
+import io.github.krossterm.MoveToPreviousLine
+import io.github.krossterm.MoveToRow
+import io.github.krossterm.MoveUp
+import io.github.krossterm.RestorePosition
+import io.github.krossterm.SavePosition
+import io.github.krossterm.Show
 import io.github.krossterm.style.Attribute
 import io.github.krossterm.style.Attributes
 import io.github.krossterm.style.Color
@@ -35,9 +35,9 @@ import io.github.krossterm.terminal.ScrollDown
 import io.github.krossterm.terminal.ScrollUp
 import io.github.krossterm.terminal.SetSize
 import io.github.krossterm.terminal.SetTitle
-import io.github.krossterm.notification.SendNotification
-import io.github.krossterm.progress.ProgressState
-import io.github.krossterm.progress.SetProgress
+import io.github.krossterm.SendNotification
+import io.github.krossterm.ProgressState
+import io.github.krossterm.SetProgress
 import java.io.Writer
 
 /** Restricts implicit receivers so `terminal { terminal { … } }` doesn't compile. */

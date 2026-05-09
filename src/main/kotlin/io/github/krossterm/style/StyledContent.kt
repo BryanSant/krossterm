@@ -1,6 +1,6 @@
 package io.github.krossterm.style
 
-import io.github.krossterm.ansi.Csi.CSI
+import io.github.krossterm.Ansi.CSI
 
 /**
  * Display content (string, char, anything `toString`-able) tagged with a [ContentStyle].

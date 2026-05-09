@@ -1,6 +1,7 @@
 package io.github.krossterm.notification
 
 import io.github.krossterm.Command
+import io.github.krossterm.SendNotification
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain

@@ -1,8 +1,8 @@
-package io.github.krossterm.progress
+package io.github.krossterm
 
 import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.OSC
-import io.github.krossterm.ansi.Csi.ST
+import io.github.krossterm.Ansi.OSC
+import io.github.krossterm.Ansi.ST
 
 /** The visual state of the terminal's progress indicator. */
 public sealed interface ProgressState {

@@ -1,7 +1,7 @@
 package io.github.krossterm
 
-import io.github.krossterm.ansi.Csi
-import io.github.krossterm.cursor.Position
+import io.github.krossterm.Ansi
+import io.github.krossterm.Position
 import io.github.krossterm.event.Event
 import io.github.krossterm.event.EventReader
 import io.github.krossterm.terminal.BeginSynchronizedUpdate
@@ -142,7 +142,7 @@ public class Terminal internal constructor(
     public suspend fun cursorPosition(timeout: Duration = 250.milliseconds): Position? {
         // Drain any stale responses that pre-date this query.
         while (eventReader.cursorPositionChannel.tryReceive().isSuccess) Unit
-        out.append(Csi.CSI).append("6n")
+        out.append(Ansi.CSI).append("6n")
         out.flush()
         return withTimeoutOrNull(timeout) { eventReader.cursorPositionChannel.receive() }
     }

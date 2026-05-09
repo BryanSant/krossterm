@@ -1,9 +1,9 @@
 package io.github.krossterm.terminal
 
 import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.CSI
-import io.github.krossterm.ansi.Csi.OSC
-import io.github.krossterm.ansi.Csi.ST
+import io.github.krossterm.Ansi.CSI
+import io.github.krossterm.Ansi.OSC
+import io.github.krossterm.Ansi.ST
 
 // ---- Clear ----
 

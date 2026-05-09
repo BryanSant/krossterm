@@ -1,14 +1,14 @@
 package io.github.krossterm.command
 
 import io.github.krossterm.Command
-import io.github.krossterm.cursor.Hide
-import io.github.krossterm.cursor.MoveDown
-import io.github.krossterm.cursor.MoveTo
-import io.github.krossterm.cursor.MoveToColumn
-import io.github.krossterm.cursor.MoveToRow
-import io.github.krossterm.cursor.RestorePosition
-import io.github.krossterm.cursor.SavePosition
-import io.github.krossterm.cursor.Show
+import io.github.krossterm.Hide
+import io.github.krossterm.MoveDown
+import io.github.krossterm.MoveTo
+import io.github.krossterm.MoveToColumn
+import io.github.krossterm.MoveToRow
+import io.github.krossterm.RestorePosition
+import io.github.krossterm.SavePosition
+import io.github.krossterm.Show
 import io.github.krossterm.queue
 import io.github.krossterm.style.Print
 import io.github.krossterm.terminal.Clear

@@ -2,9 +2,9 @@ package io.github.krossterm.examples
 
 import io.github.krossterm.Terminal
 import io.github.krossterm.execute
-import io.github.krossterm.link.EndLink
-import io.github.krossterm.link.StartLink
-import io.github.krossterm.link.link
+import io.github.krossterm.EndLink
+import io.github.krossterm.StartLink
+import io.github.krossterm.link
 import io.github.krossterm.style.Print
 import io.github.krossterm.style.bold
 import io.github.krossterm.style.cyan

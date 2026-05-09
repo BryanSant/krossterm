@@ -2,9 +2,9 @@ package io.github.krossterm.examples
 
 import io.github.krossterm.Terminal
 import io.github.krossterm.execute
-import io.github.krossterm.progress.ClearProgress
-import io.github.krossterm.progress.ProgressState
-import io.github.krossterm.progress.SetProgress
+import io.github.krossterm.ClearProgress
+import io.github.krossterm.ProgressState
+import io.github.krossterm.SetProgress
 import io.github.krossterm.style.green
 import io.github.krossterm.style.red
 import io.github.krossterm.style.yellow

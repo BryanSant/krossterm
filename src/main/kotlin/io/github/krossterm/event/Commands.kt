@@ -1,7 +1,7 @@
 package io.github.krossterm.event
 
 import io.github.krossterm.Command
-import io.github.krossterm.ansi.Csi.CSI
+import io.github.krossterm.Ansi.CSI
 
 /**
  * Enable terminal mouse-input reporting (X10/SGR/etc.).

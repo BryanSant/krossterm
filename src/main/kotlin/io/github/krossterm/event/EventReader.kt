@@ -1,7 +1,7 @@
 package io.github.krossterm.event
 
-import io.github.krossterm.cursor.Position
-import io.github.krossterm.event.parser.AnsiInputParser
+import io.github.krossterm.Position
+import io.github.krossterm.event.AnsiInputParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

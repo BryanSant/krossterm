@@ -1,9 +1,9 @@
 package io.github.krossterm.examples
 
 import io.github.krossterm.Terminal
-import io.github.krossterm.cursor.Hide
-import io.github.krossterm.cursor.MoveTo
-import io.github.krossterm.cursor.Show
+import io.github.krossterm.Hide
+import io.github.krossterm.MoveTo
+import io.github.krossterm.Show
 import io.github.krossterm.event.DisableMouseCapture
 import io.github.krossterm.event.EnableMouseCapture
 import io.github.krossterm.event.Event

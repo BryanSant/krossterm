@@ -11,7 +11,7 @@ import io.github.krossterm.event.ModifierKeyCode
 import io.github.krossterm.event.MouseButton
 import io.github.krossterm.event.MouseEvent
 import io.github.krossterm.event.MouseEventKind
-import io.github.krossterm.event.parser.AnsiInputParser
+import io.github.krossterm.event.AnsiInputParser
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
