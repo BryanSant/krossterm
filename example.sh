@@ -3,7 +3,7 @@
 # Usage: ./example.sh <ExampleName>
 #
 # Requires the project to have been compiled first:
-#   ./gradlew compileExamplesKotlin
+#   ./gradlew :examples:compileKotlin
 
 set -euo pipefail
 
@@ -20,6 +20,7 @@ declare -A EXAMPLES=(
     [Stylize]="Showcase of all color/attribute combinations"
     [Link]="Clickable OSC 8 hyperlink (requires a supporting terminal)"
     [IsTty]="Detect whether stdout is a real TTY and print the terminal type"
+    [TuiShowcase]="krossterm-tui tour: frames, tables, row/column, progress bars, spinner"
 )
 
 if [[ $# -eq 0 ]]; then
@@ -41,21 +42,26 @@ if [[ -z "${EXAMPLES[$EXAMPLE]+x}" ]]; then
 fi
 
 # ---- build directories ----
-BUILD="$DIR/build"
+EXAMPLES_BUILD="$DIR/examples/build"
+KROSSTERM_BUILD="$DIR/krossterm/build"
+KROSSTERM_TUI_BUILD="$DIR/krossterm-tui/build"
 CP_CLASSES=(
-    "$BUILD/classes/kotlin/examples"
-    "$BUILD/classes/java/examples"
-    "$BUILD/resources/examples"
-    "$BUILD/classes/kotlin/main"
-    "$BUILD/classes/java/main"
-    "$BUILD/resources/main"
+    "$EXAMPLES_BUILD/classes/kotlin/main"
+    "$EXAMPLES_BUILD/classes/java/main"
+    "$EXAMPLES_BUILD/resources/main"
+    "$KROSSTERM_BUILD/classes/kotlin/main"
+    "$KROSSTERM_BUILD/classes/java/main"
+    "$KROSSTERM_BUILD/resources/main"
+    "$KROSSTERM_TUI_BUILD/classes/kotlin/main"
+    "$KROSSTERM_TUI_BUILD/classes/java/main"
+    "$KROSSTERM_TUI_BUILD/resources/main"
 )
 
-# ---- dependency jars ----
+# ---- dependency jars (keep in sync with gradle/libs.versions.toml) ----
 KOTLIN_VER="2.3.21"
 COROUTINES_VER="1.10.2"
-IO_VER="0.6.0"
-JLINE_VER="3.27.1"
+IO_VER="0.9.0"
+JLINE_VER="4.1.0"
 
 jar() { find "$GRADLE_CACHE/$1" -name "$2" -print -quit 2>/dev/null; }
 
@@ -74,9 +80,9 @@ CP_JARS=(
 IFS=':' eval 'CP="${CP_CLASSES[*]}:${CP_JARS[*]}"'
 
 # ---- sanity checks ----
-if [[ ! -d "$BUILD/classes/kotlin/examples" ]]; then
-    echo "error: compiled examples not found under $BUILD" >&2
-    echo "       run: ./gradlew compileExamplesKotlin" >&2
+if [[ ! -d "$EXAMPLES_BUILD/classes/kotlin/main" ]]; then
+    echo "error: compiled examples not found under $EXAMPLES_BUILD" >&2
+    echo "       run: ./gradlew :examples:compileKotlin" >&2
     exit 1
 fi
 

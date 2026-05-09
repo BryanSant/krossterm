@@ -2,9 +2,10 @@
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+    id("com.gradleup.nmcp.settings") version "1.4.4"
 }
 
-rootProject.name = "krossterm"
+rootProject.name = "krossterm-parent"
 
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
@@ -12,3 +13,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+nmcpSettings {
+    centralPortal {
+        username = System.getenv("MVN_CENTRAL_USER") ?: ""
+        password = System.getenv("MVN_CENTRAL_PASS") ?: ""
+        publishingType = "AUTOMATIC"
+    }
+}
+
+include(":krossterm", ":krossterm-tui", ":examples")

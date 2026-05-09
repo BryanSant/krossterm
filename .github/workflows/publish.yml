@@ -53,7 +53,7 @@ jobs:
           echo "next=$NEXT" >> "$GITHUB_OUTPUT"
 
       - name: Publish to Maven Central and GitHub Packages
-        run: ./gradlew publishAllPublicationsToCentralPortal -Pversion=${{ steps.versions.outputs.release }}
+        run: ./gradlew publishAggregationToCentralPortal -Pversion=${{ steps.versions.outputs.release }}
         env:
           MVN_CENTRAL_USER: ${{ secrets.MVN_CENTRAL_USER }}
           MVN_CENTRAL_PASS: ${{ secrets.MVN_CENTRAL_PASS }}
